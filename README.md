@@ -1,2 +1,2 @@
 # HandSync-Presenter
-Hand Gesture Controlled Presentation
+Hand Gesture Controlled Presentation (major project)
