@@ -31,27 +31,3 @@ hs, ws = int(120 * 1), int(213 * 1)  # width and height of small image
 # Get list of presentation images
 pathImages = sorted(os.listdir(folderPath), key=len)
 print(pathImages)
-
-while True:
-    # Get image frame
-    success, img = cap.read()
-    img = cv2.flip(img, 1)
-    pathFullImage = os.path.join(folderPath, pathImages[imgNumber])
-    imgCurrent = cv2.imread(pathFullImage)
-
-    # Find the hand and its landmarks
-    hands, img = detectorHand.findHands(img)  # with draw
-    # Draw Gesture Threshold line
-    cv2.line(img, (0, gestureThreshold), (width, gestureThreshold), (0, 255, 0), 10)
-
-    if hands and buttonPressed is False:  # If hand is detected
-
-        hand = hands[0]
-        cx, cy = hand["center"]
-        lmList = hand["lmList"]  # List of 21 Landmark points
-        fingers = detectorHand.fingersUp(hand)  # List of which fingers are up
-
-        # Constrain values for easier drawing
-        xVal = int(np.interp(lmList[8][0], [width // 2, width], [0, width]))
-        yVal = int(np.interp(lmList[8][1], [150, height-150], [0, height]))
-        indexFinger = xVal, yVal
