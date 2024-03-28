@@ -17,6 +17,7 @@ pathImages = sorted(os.listdir(folderPath), key= len)
 
 #variables
 imgNumber = 0
+<<<<<<< HEAD
 hs, ws = int(120*2), int(213*2)
 gestureThreshold = 300
 
@@ -52,3 +53,32 @@ while True:
     key = cv2.waitKey(1)
     if key == ord('q'):
         break
+=======
+delayCounter = 0
+annotations = [[]]
+annotationNumber = -1
+annotationStart = False
+hs, ws = int(120 * 1), int(213 * 1)  # width and height of small image
+
+# Get list of presentation images
+pathImages = sorted(os.listdir(folderPath), key=len)
+print(pathImages)
+while True:
+    # Get image frame
+    success, img = cap.read()
+    img = cv2.flip(img, 1)
+    pathFullImage = os.path.join(folderPath, pathImages[imgNumber])
+    imgCurrent = cv2.imread(pathFullImage)
+
+    # Find the hand and its landmarks
+    hands, img = detectorHand.findHands(img)  # with draw
+    # Draw Gesture Threshold line
+    cv2.line(img, (0, gestureThreshold), (width, gestureThreshold), (0, 255, 0), 10)
+
+    if hands and buttonPressed is False:  # If hand is detected
+
+        hand = hands[0]
+        cx, cy = hand["center"]
+        lmList = hand["lmList"]  # List of 21 Landmark points
+        fingers = detectorHand.fingersUp(hand)  # List of which fingers are up
+>>>>>>> f649448fe3b808a989eb2de99f1a5e0dcf5e81aa
