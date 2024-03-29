@@ -3,7 +3,7 @@ import os
 from cvzone.HandTrackingModule import HandDetector
 
 #variables
-width, height = 1280, 720
+width, height = 1920, 1080
 folderPath =  ("Presentation")
 
 #camera setup
@@ -17,9 +17,11 @@ pathImages = sorted(os.listdir(folderPath), key= len)
 
 #variables
 imgNumber = 0
-<<<<<<< HEAD
 hs, ws = int(120*2), int(213*2)
 gestureThreshold = 300
+buttonPressed = False
+buttonCounter = 0
+buttonDelay = 15
 
 #hand Detector
 detector = HandDetector(detectionCon=0.8, maxHands= 1)
@@ -33,13 +35,39 @@ while True:
     pathFullImage = os.path.join(folderPath, pathImages[0])
     imgCurrent = cv2.imread(pathFullImage)
 
-    hands, img = detector.findHands(img, flipType= False)
+    hands, img = detector.findHands(img)
     cv2.line(img, (0, gestureThreshold),(width , gestureThreshold),(0,25,0),10)
 
-    if hands:
+    if hands and buttonPressed is False:
         hand = hands[0]
         fingers = detector.fingersUp(hand)
-        print(fingers)
+        cx, cy = hand['center']
+        # print(fingers)
+
+        if cy <= gestureThreshold :         #if the hand is above the line(threshold)
+
+            #Gesture NO1
+            if fingers == [1,0,0,0,0]:
+                print('Left')
+                
+                if imgNumber > 0:   
+                    buttonPressed = True 
+                    imgNumber -=1
+
+            #Gesture NO2
+            if fingers == [0,0,0,0,1]:
+                print('Right')
+                
+                if imgNumber < len(pathImages)-1:
+                    buttonPressed = True
+                    imgNumber += 1
+
+    #button pressed iteration
+    if buttonPressed:
+        buttonCounter += 1
+        if buttonCounter > buttonDelay:
+            buttonCounter = 0
+            buttonPressed = False
 
 
     #Adding Webcam img on Slide
@@ -53,32 +81,3 @@ while True:
     key = cv2.waitKey(1)
     if key == ord('q'):
         break
-=======
-delayCounter = 0
-annotations = [[]]
-annotationNumber = -1
-annotationStart = False
-hs, ws = int(120 * 1), int(213 * 1)  # width and height of small image
-
-# Get list of presentation images
-pathImages = sorted(os.listdir(folderPath), key=len)
-print(pathImages)
-while True:
-    # Get image frame
-    success, img = cap.read()
-    img = cv2.flip(img, 1)
-    pathFullImage = os.path.join(folderPath, pathImages[imgNumber])
-    imgCurrent = cv2.imread(pathFullImage)
-
-    # Find the hand and its landmarks
-    hands, img = detectorHand.findHands(img)  # with draw
-    # Draw Gesture Threshold line
-    cv2.line(img, (0, gestureThreshold), (width, gestureThreshold), (0, 255, 0), 10)
-
-    if hands and buttonPressed is False:  # If hand is detected
-
-        hand = hands[0]
-        cx, cy = hand["center"]
-        lmList = hand["lmList"]  # List of 21 Landmark points
-        fingers = detectorHand.fingersUp(hand)  # List of which fingers are up
->>>>>>> f649448fe3b808a989eb2de99f1a5e0dcf5e81aa
