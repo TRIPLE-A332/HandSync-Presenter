@@ -106,8 +106,6 @@ while True:
                 annotationNumber -= 1
                 buttonPressed = True
         
-        
-        #Additional Gesture
                 # Gesture 6 - Cursor
         if fingers == [1,1,0,0,0]:
             
@@ -117,24 +115,24 @@ while True:
             thumb_tip = lmList[4]
             index_tip = lmList[8]
             thumb_to_index_distance = np.linalg.norm(np.array(thumb_tip) - np.array(index_tip))
-            # if thumb_to_index_distance < 30:  
-            #     print('click')
-            #     pyautogui.click()
+            if thumb_to_index_distance < 30:  
+                print('click')
+                pyautogui.click()
         
             #Gesture 6' - Zoom In/Out
         
 
-            if thumb_to_index_distance < 50:  # Zoom In Gesture
-                print("Zoom In")
-                # buttonPressed = True
-                # Adjust zoom level accordingly
-                imgCurrent = cv2.resize(imgCurrent, None, fx=1.5, fy=1.5)
+            # if thumb_to_index_distance < 50:  # Zoom In Gesture
+            #     print("Zoom In")
+            #     # buttonPressed = True
+            #     # Adjust zoom level accordingly
+            #     imgCurrent = cv2.resize(imgCurrent, None, fx=1.5, fy=1.5)
 
-            elif thumb_to_index_distance > 200:  # Zoom Out Gesture
-                print("Zoom Out")
-                # buttonPressed = True
-                # Adjust zoom level accordingly
-                imgCurrent = cv2.resize(imgCurrent, None, fx=0.7, fy=0.7)
+            # elif thumb_to_index_distance > 200:  # Zoom Out Gesture
+            #     print("Zoom Out")
+            #     # buttonPressed = True
+            #     # Adjust zoom level accordingly
+            #     imgCurrent = cv2.resize(imgCurrent, None, fx=0.7, fy=0.7)
 
 
     else:

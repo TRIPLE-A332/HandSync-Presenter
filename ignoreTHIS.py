@@ -1,16 +1,20 @@
 import cv2
 import os
 from cvzone.HandTrackingModule import HandDetector
+import matplotlib.pyplot as plt
 import numpy as np
+import time
+import pyautogui
 
 #variables
-width, height = 1920, 1080
+width, height = 1280, 720
 folderPath =  ("Presentation")
 
 #camera setup
 cap = cv2.VideoCapture(0)
 cap.set(3,width)
 cap.set(4,height)
+pTime = 0
 
 #Getting Images of Presentation
 pathImages = sorted(os.listdir(folderPath), key= len)
@@ -18,14 +22,15 @@ pathImages = sorted(os.listdir(folderPath), key= len)
 
 #variables
 imgNumber = 0
-hs, ws = int(120*2), int(213*2)
+hs, ws = int(120*1.5), int(213*1.5)
 gestureThreshold = 300
 buttonPressed = False
 buttonCounter = 0
-buttonDelay = 10
+buttonDelay = 15
 annotations = [[]]
 annotationNumber = -1
 annotationStart = False
+screen_width, screen_height = pyautogui.size()
 
 #hand Detector
 detector = HandDetector(detectionCon=0.8, maxHands= 1)
@@ -42,6 +47,12 @@ while True:
     hands, img = detector.findHands(img)
     cv2.line(img, (0, gestureThreshold),(width , gestureThreshold),(0,25,0),10)
 
+    #FPS
+    cTime = time.time()
+    fps = 1/ (cTime - pTime)
+    pTime = cTime
+    cv2.putText(img , str(int(fps)), (20,50), cv2.FONT_HERSHEY_PLAIN, 3 , (255,0,0) , 3 )     
+
     if hands and buttonPressed is False:
         hand = hands[0]
         fingers = detector.fingersUp(hand)
@@ -49,7 +60,7 @@ while True:
         lmList = hand['lmList']
 
         #contraint values for easy drawing 
-        xVal = int(np.interp(lmList[8][0],[width//2, w], [0,width]))
+        xVal = int(np.interp(lmList[8][0],[width//2, width], [0,width]))
         yVal = int(np.interp(lmList[8][1],[150, height-150], [0,height]))
         indexFinger = xVal, yVal
 
@@ -100,6 +111,36 @@ while True:
                 annotationNumber = -1
                 buttonPressed = True
 
+        #Additional Gesture
+                # Gesture 6 - Cursor
+        if fingers == [1,1,0,0,0]:
+            
+            index_cx = screen_width/w*cx
+            index_cy = screen_height/h*cy
+            pyautogui.moveTo(index_cx,index_cy)
+            thumb_tip = lmList[4]
+            index_tip = lmList[8]
+            thumb_to_index_distance = np.linalg.norm(np.array(thumb_tip) - np.array(index_tip))
+            # if thumb_to_index_distance < 30:  
+            #     print('click')
+            #     pyautogui.click()
+        
+            #Gesture 6' - Zoom In/Out
+        
+
+            if thumb_to_index_distance < 50:  # Zoom In Gesture
+                print("Zoom In")
+                # buttonPressed = True
+                # Adjust zoom level accordingly
+                imgCurrent = cv2.resize(imgCurrent, None, fx=1.5, fy=1.5)
+
+            elif thumb_to_index_distance > 200:  # Zoom Out Gesture
+                print("Zoom Out")
+                # buttonPressed = True
+                # Adjust zoom level accordingly
+                imgCurrent = cv2.resize(imgCurrent, None, fx=0.7, fy=0.7)
+    else :
+        annotationStart = False
 
     #button pressed iteration
     if buttonPressed:
