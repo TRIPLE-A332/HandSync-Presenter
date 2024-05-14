@@ -2,16 +2,20 @@ from cvzone.HandTrackingModule import HandDetector
 import cv2
 import os
 import numpy as np
+import time
+import pyautogui    
 
 # Parameters
 width, height = 1280, 720
 gestureThreshold = 300
 folderPath = "Presentation"
+screen_width, screen_height = pyautogui.size()
 
 # Camera Setup
 cap = cv2.VideoCapture(0)
 cap.set(3, width)
 cap.set(4, height)
+pTime = 0
 
 # Hand Detector
 detectorHand = HandDetector(detectionCon=0.8, maxHands=1)
@@ -44,6 +48,12 @@ while True:
     hands, img = detectorHand.findHands(img)  # with draw
     # Draw Gesture Threshold line
     cv2.line(img, (0, gestureThreshold), (width, gestureThreshold), (0, 255, 0), 10)
+
+    #FPS
+    cTime = time.time()
+    fps = 1/ (cTime - pTime)
+    pTime = cTime
+    cv2.putText(img , str(int(fps)), (20,50), cv2.FONT_HERSHEY_PLAIN, 3 , (255,0,0) , 3 )
 
     if hands and buttonPressed is False:  # If hand is detected
 
@@ -95,6 +105,37 @@ while True:
                 annotations.pop(-1)
                 annotationNumber -= 1
                 buttonPressed = True
+        
+        
+        #Additional Gesture
+                # Gesture 6 - Cursor
+        if fingers == [1,1,0,0,0]:
+            
+            index_cx = screen_width/w*cx
+            index_cy = screen_height/h*cy
+            pyautogui.moveTo(index_cx,index_cy)
+            thumb_tip = lmList[4]
+            index_tip = lmList[8]
+            thumb_to_index_distance = np.linalg.norm(np.array(thumb_tip) - np.array(index_tip))
+            # if thumb_to_index_distance < 30:  
+            #     print('click')
+            #     pyautogui.click()
+        
+            #Gesture 6' - Zoom In/Out
+        
+
+            if thumb_to_index_distance < 50:  # Zoom In Gesture
+                print("Zoom In")
+                # buttonPressed = True
+                # Adjust zoom level accordingly
+                imgCurrent = cv2.resize(imgCurrent, None, fx=1.5, fy=1.5)
+
+            elif thumb_to_index_distance > 200:  # Zoom Out Gesture
+                print("Zoom Out")
+                # buttonPressed = True
+                # Adjust zoom level accordingly
+                imgCurrent = cv2.resize(imgCurrent, None, fx=0.7, fy=0.7)
+
 
     else:
         annotationStart = False
