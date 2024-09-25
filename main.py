@@ -115,7 +115,7 @@ while True:
             thumb_tip = lmList[4]
             index_tip = lmList[8]
             thumb_to_index_distance = np.linalg.norm(np.array(thumb_tip) - np.array(index_tip))
-            if thumb_to_index_distance < 30:  
+            if thumb_to_index_distance < 40:  
                 print('click')
                 pyautogui.click()
         
