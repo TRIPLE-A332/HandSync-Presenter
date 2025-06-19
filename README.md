@@ -1,4 +1,5 @@
 # HandSync Presenter 
+Video Demo - [Link](https://youtu.be/pDDjFSOUHFY)
 
 A **hand gesture-controlled presentation system** built using **OpenCV** and **CVZone** to enable **touch-free slide control**. This project aims to create an intuitive and hardware-free interface for presenters by leveraging real-time computer vision and gesture recognition.
 
